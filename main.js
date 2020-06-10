@@ -10,7 +10,6 @@ connectDB();
 const isMac = process.platform === 'darwin';
 
 let isDev = false;
-
 if (process.env.NODE_ENV !== undefined && process.env.NODE_ENV === 'development') {
 	isDev = true;
 }
@@ -48,7 +47,6 @@ function createMainWindow() {
 
 	mainWindow.loadURL(indexPath);
 
-	// Don't show until we are ready and loaded
 	mainWindow.once('ready-to-show', () => {
 		mainWindow.show();
 
@@ -76,6 +74,7 @@ app.on('ready', () => {
 	Menu.setApplicationMenu(mainMenu);
 });
 
+// Menu specifications
 const menu = [
 	...(isMac ? [{ role: 'appMenu' }] : []),
 	{
