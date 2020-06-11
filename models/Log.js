@@ -8,8 +8,8 @@ const LogSchema = new mongoose.Schema({
   },
   priority: {
     type: String,
-    default: 'low',
-    enum: ['low', 'moderate', 'high']
+    default: 'minor',
+    enum: ['minor', 'moderate', 'major']
   },
   user: {
     type: String,

@@ -14,7 +14,6 @@ const Login = () => {
   const [password, setPassword] = useState('');
 
   const onSubmit = () => {
-    // TODO: handle logging in
     ipcRenderer.send('login:try', username, password);
     ipcRenderer.on('login:result', (e, login) => {
       if (login) {
@@ -63,14 +62,15 @@ const Login = () => {
         </Alert>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant='info' onClick={onSubmit} block>
-          Log in
-        </Button>
+        <LoadingButton variant='info' text='Log in' auth={onSubmit} />
       </Modal.Footer>
     </Modal>
   );
 }
 /*
-<LoadingButton variant='info' text='Log in' login={onSubmit} />
+<Button variant='info' onClick={onSubmit} block>
+  Log in
+</Button>
+<LoadingButton variant='info' text='Log in' fail={alert} />
 */
 export default Login;

@@ -123,10 +123,10 @@ ipcMain.on('logs:load', sendLogs);
 // Add log
 ipcMain.on('logs:add', async (e, item) => {
 	try {
-		await Log.create(item);
+		await Log.create({...item, user});
 		sendLogs();
 	} catch (e) {
-		consol.log(e);
+		console.log(e);
 	}
 });
 

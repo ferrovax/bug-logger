@@ -4,6 +4,7 @@ import Table from 'react-bootstrap/Table';
 import Alert from 'react-bootstrap/Alert';
 import LogItem from './LogItem';
 import AddLogItem from './AddLogItem';
+import AddLogModal from './AddLogModal';
 import Login from './Login';
 import { ipcRenderer } from 'electron';
 
@@ -30,8 +31,8 @@ const App = () => {
 	}, [])
 
 	function addItem(item) {
-		if (item.text === '' || item.user === '' || item.priority === '') {
-			showAlert('Please enter all fields', 'danger');
+		if (item.text === '') {
+			showAlert('Please enter a description', 'danger');
 			return false;
 		}
 
@@ -59,11 +60,11 @@ const App = () => {
 			})
 		}, time);
 	}
-
+	//<Login />
 	return (
 		<Container>
-			<Login />
-			<AddLogItem addItem={addItem} />
+		<Login />
+			<AddLogModal addItem={addItem} />
 			{alert.show && <Alert variant={alert.variant}>{alert.message}</Alert>}
 			<Table striped bordered variant='dark'>
 				<thead>
