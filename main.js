@@ -5,7 +5,19 @@ const connectDB = require('./config/db');
 const Log = require('./models/Log');
 
 // Connect to database
-connectDB();
+//connectDB();
+let user;
+
+// Login attempted
+ipcMain.on('login:try', async (e, username, password) => {
+	const login = await connectDB(username, password);
+
+	if (login) {
+		user = username;
+	}
+
+	e.reply('login:result', login);
+});
 
 const isMac = process.platform === 'darwin';
 

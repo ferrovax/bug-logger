@@ -4,6 +4,7 @@ import Table from 'react-bootstrap/Table';
 import Alert from 'react-bootstrap/Alert';
 import LogItem from './LogItem';
 import AddLogItem from './AddLogItem';
+import Login from './Login';
 import { ipcRenderer } from 'electron';
 
 const App = () => {
@@ -61,19 +62,37 @@ const App = () => {
 
 	return (
 		<Container>
+			<Login />
 			<AddLogItem addItem={addItem} />
 			{alert.show && <Alert variant={alert.variant}>{alert.message}</Alert>}
-			<Table>
+			<Table striped bordered variant='dark'>
 				<thead>
 					<tr>
-						<th>Priority</th>
-						<th>Log Text</th>
-						<th>User</th>
-						<th>Created</th>
 						<th></th>
+						<th>OPEN</th>
+						<th>IN PROGRESS</th>
+						<th>CLOSED</th>
 					</tr>
 				</thead>
 				<tbody>
+					<tr>
+						<td>1</td>
+						<td>entry #1</td>
+						<td>entry #1</td>
+						<td>entry #1</td>
+					</tr>
+					<tr>
+						<td>2</td>
+						<td>entry #2</td>
+						<td>entry #2</td>
+						<td>entry #2</td>
+					</tr>
+					<tr>
+						<td>3</td>
+						<td>entry #3</td>
+						<td>entry #3</td>
+						<td>entry #3</td>
+					</tr>
 					{ logs.map(log => <LogItem key={log._id} log={log} deleteItem={deleteItem} />) }
 				</tbody>
 			</Table>

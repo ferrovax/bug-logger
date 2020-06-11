@@ -1,11 +1,10 @@
+//const secret = require('../secret');
+const mongoose = require('mongoose'); 
 
-const secret = require('../secret');
-const mongoose = require('mongoose');
-
-const connectDB = async () => {
+const connectDB = async (username, password) => {
   try {
     const conn = await mongoose.connect(
-      `mongodb+srv://Ferrovax:${secret}@cluster0-zfqqm.mongodb.net/buglogger?retryWrites=true&w=majority`,
+      `mongodb+srv://${username}:${password}@cluster0-zfqqm.mongodb.net/buglogger?retryWrites=true&w=majority`,
       {
         useNewUrlParser: true,
         useCreateIndex: true,
@@ -14,9 +13,11 @@ const connectDB = async () => {
     );
 
     console.log('MongoDB connected');
+    return true;
   } catch (e) {
     console.log(e);
-    process.exit(1);
+    //process.exit(1);
+    return false;
   }
 }
 
