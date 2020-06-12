@@ -4,11 +4,9 @@ const { app, BrowserWindow, ipcMain, Menu } = require('electron');
 const connectDB = require('./config/db');
 const Log = require('./models/Log');
 
-// Connect to database
-//connectDB();
 let user;
 
-// Login attempted
+// Login attempted, connect to database
 ipcMain.on('login:try', async (e, username, password) => {
 	const login = await connectDB(username, password);
 
@@ -33,7 +31,7 @@ function createMainWindow() {
 		width: 1100,
 		height: 800,
 		show: false,
-		backgroundColor: 'white',
+		backgroundColor: 'black',
 		icon: './assets/icons/icon.png',
 		webPreferences: {
 			nodeIntegration: true,

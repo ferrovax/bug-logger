@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import Container from 'react-bootstrap/Container';
+import { Container, Row, Col } from 'react-bootstrap';
 import Table from 'react-bootstrap/Table';
 import Alert from 'react-bootstrap/Alert';
 import LogItem from './LogItem';
 import AddLogItem from './AddLogItem';
 import AddLogModal from './AddLogModal';
 import Login from './Login';
+import Ticket from './Ticket';
 import { ipcRenderer } from 'electron';
 
 const App = () => {
@@ -22,6 +23,7 @@ const App = () => {
 
 		ipcRenderer.on('logs:get', (e, logs) => {
 			setLogs(JSON.parse(logs));
+			console.log(logs);
 		});
 
 		ipcRenderer.on('logs:clear', () => {
@@ -62,43 +64,22 @@ const App = () => {
 	}
 	//<Login />
 	return (
-		<Container>
-		<Login />
-			<AddLogModal addItem={addItem} />
+		<div style={{ backgroundColor: 'white' }}>
+		<Container fluid>
+			<Login />
 			{alert.show && <Alert variant={alert.variant}>{alert.message}</Alert>}
-			<Table striped bordered variant='dark'>
-				<thead>
-					<tr>
-						<th></th>
-						<th>OPEN</th>
-						<th>IN PROGRESS</th>
-						<th>CLOSED</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr>
-						<td>1</td>
-						<td>entry #1</td>
-						<td>entry #1</td>
-						<td>entry #1</td>
-					</tr>
-					<tr>
-						<td>2</td>
-						<td>entry #2</td>
-						<td>entry #2</td>
-						<td>entry #2</td>
-					</tr>
-					<tr>
-						<td>3</td>
-						<td>entry #3</td>
-						<td>entry #3</td>
-						<td>entry #3</td>
-					</tr>
-					{ logs.map(log => <LogItem key={log._id} log={log} deleteItem={deleteItem} />) }
-				</tbody>
-			</Table>
+			<AddLogModal addItem={addItem} />
+			<Row>
+				<Col>
+					OPEN
+					{logs.map(log => <Ticket key={log._id} log={log} />)}
+				</Col>
+				<Col>IN PROGRESS</Col>
+				<Col>CLOSED</Col>
+			</Row>
 		</Container>
+		</div>
 	);
 }
-
+//{ logs.map(log => <LogItem key={log._id} log={log} deleteItem={deleteItem} />) }
 export default App;

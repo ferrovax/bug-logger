@@ -43,9 +43,9 @@ const AddLogModal = ({ addItem }) => {
             </Form.Group>
             <Form.Group>
               <Form.Control as='select' value={priority} onChange={e => setPriority(e.target.value)}>
-                <option value='low'>minor</option>
+                <option value='minor'>minor</option>
                 <option value='moderate'>moderate</option>
-                <option value='high'>major</option>
+                <option value='major'>major</option>
                 </Form.Control>
                 <Form.Text className='text-muted'>Select ticket priority</Form.Text>
             </Form.Group>
