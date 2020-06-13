@@ -1,10 +1,9 @@
 import React from 'react';
 import Moment from 'react-moment';
-import Button from 'react-bootstrap/Button';
-import Badge from 'react-bootstrap/Badge';
-import Card from 'react-bootstrap/Card';
+import { Button, Badge, Card } from 'react-bootstrap';
+import { Draggable } from 'react-beautiful-dnd';
 
-const Ticket = ({ log }) => {
+const Ticket = ({ log, index }) => {
   const setVariant = () => {
     switch (log.priority) {
       case 'major':
@@ -17,15 +16,33 @@ const Ticket = ({ log }) => {
   }
 
   return (
-    <Card border={setVariant()} style={{ width: '18rem' }} bg='dark' text='light'>
-      <Card.Body>
-        <Card.Title>{log.user}</Card.Title>
-        <Card.Subtitle className="mb-2 text-muted"><Moment format='MMMM Do YYYY, h:mm:ss a'>{ new Date(log.created) }</Moment></Card.Subtitle>
-        <Card.Text>
-          {log.text}
-        </Card.Text>
-      </Card.Body>
-    </Card>
+    <Draggable draggableId={log._id} index={index}>
+      {provided => (
+          <div
+          {...provided.draggableProps}
+          {...provided.dragHandleProps}
+          ref={provided.innerRef}
+          >
+          <Card
+            border={setVariant()}
+            bg='dark'
+            text='light'
+          >
+            <Card.Body>
+              <Card.Title>{log.user}</Card.Title>
+              <Card.Subtitle className="mb-2 text-muted">
+                <Moment format='MMMM Do YYYY, h:mm:ss a'>
+                  { new Date(log.created) }
+                </Moment>
+              </Card.Subtitle>
+              <Card.Text>
+                {log.text}
+              </Card.Text>
+            </Card.Body>
+          </Card>
+          </div>
+      )}
+    </Draggable>
   );
 }
 

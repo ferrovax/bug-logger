@@ -31,7 +31,6 @@ function createMainWindow() {
 		width: 1100,
 		height: 800,
 		show: false,
-		backgroundColor: 'black',
 		icon: './assets/icons/icon.png',
 		webPreferences: {
 			nodeIntegration: true,
@@ -123,8 +122,21 @@ ipcMain.on('logs:add', async (e, item) => {
 	try {
 		await Log.create({...item, user});
 		sendLogs();
-	} catch (e) {
-		console.log(e);
+	} catch (err) {
+		console.log(err);
+	}
+});
+
+// Move log (to another Kolumn)
+// TODO
+ipcMain.on('logs:move_log', async (e, draggableId, droppableId) => {
+	try {
+		const doc = await Log.findById(draggableId);
+		doc.category = droppableId;
+		await doc.save();
+		sendLogs();
+	} catch (err) {
+		console.log(err);
 	}
 });
 
@@ -133,8 +145,8 @@ ipcMain.on('logs:delete', async (e, id) => {
 	try {
 		await Log.findOneAndDelete({ _id: id });
 		sendLogs();
-	} catch (e) {
-		console.log(e);
+	} catch (err) {
+		console.log(err);
 	}
 });
 
@@ -148,7 +160,7 @@ async function clearLogs() {
 	}
 }
 
-//
+// Send logs to frontend (App.js)
 async function sendLogs() {
 	try {
 		const logs = await Log.find().sort({ created: 1 });

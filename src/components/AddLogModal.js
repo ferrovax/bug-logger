@@ -1,19 +1,12 @@
 import React, { useState } from 'react';
-import Modal from 'react-bootstrap/Modal';
-import Toast from 'react-bootstrap/Toast';
-import Form from 'react-bootstrap/Form';
-import Button from 'react-bootstrap/Button';
+import { Modal, Toast, Form, Button } from 'react-bootstrap';
 import { ipcRenderer } from 'electron';
 
 const AddLogModal = ({ addItem }) => {
   const [show, setShow] = useState(false);
   const [text, setText] = useState('');
   const [priority, setPriority] = useState('minor');
-  /*
-  const onSubmit = () => {
 
-  }
-  */
   const handlePlus = () => {
     addItem({ text, priority });
     handleClose();
@@ -29,8 +22,8 @@ const AddLogModal = ({ addItem }) => {
 
   return (
     <>
-      <Button variant='info' onClick={handleShow}>
-        Add bug
+      <Button variant='outline-info' onClick={handleShow}>
+        +
       </Button>
 
       <Modal show={show} onHide={handleClose}>

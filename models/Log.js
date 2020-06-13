@@ -16,6 +16,10 @@ const LogSchema = new mongoose.Schema({
     trim: true,
     required: [true, 'User is required']
   },
+  category: {
+    type: String,
+    default: 'BACKLOG',
+  },
   created: {
     type: Date,
     default: Date.now
