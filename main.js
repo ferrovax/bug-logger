@@ -4,19 +4,6 @@ const { app, BrowserWindow, ipcMain, Menu } = require('electron');
 const connectDB = require('./config/db');
 const Log = require('./models/Log');
 
-let user;
-
-// Login attempted, connect to database
-ipcMain.on('login:try', async (e, username, password) => {
-	const login = await connectDB(username, password);
-
-	if (login) {
-		user = username;
-	}
-
-	e.reply('login:result', login);
-});
-
 const isMac = process.platform === 'darwin';
 
 let isDev = false;
@@ -83,6 +70,18 @@ app.on('ready', () => {
 	Menu.setApplicationMenu(mainMenu);
 });
 
+app.on('window-all-closed', () => {
+	if (process.platform !== 'darwin') {
+		app.quit();
+	}
+})
+
+app.on('activate', () => {
+	if (mainWindow === null) {
+		createMainWindow();
+	}
+})
+
 // Menu specifications
 const menu = [
 	...(isMac ? [{ role: 'appMenu' }] : []),
@@ -112,7 +111,30 @@ const menu = [
 			]
 		}
 	] : [])
-]
+];
+
+// Stop error
+app.allowRendererProcessReuse = true;
+
+/*
+																		BACKEND
+================================================================================
+
+*/
+
+let user;
+
+// Login attempted, connect to database
+ipcMain.on('login:try', async (e, username, password) => {
+	const login = await connectDB(username, password);
+
+	if (login) {
+		user = username;
+		mainWindow.webContents.send('username', user);
+	}
+
+	e.reply('login:result', login);
+});
 
 // Load logs
 ipcMain.on('logs:load', sendLogs);
@@ -127,8 +149,20 @@ ipcMain.on('logs:add', async (e, item) => {
 	}
 });
 
+// Edit log
+// TODO/incomplete
+ipcMain.on('logs:edit', async (e, xyz) => {
+	try {
+		const doc = await Log.findById(xyz);
+		// compare each part of schema for changes, if so update
+		// make a helper for this
+		await doc.save();
+	} catch (err) {
+		console.log(err);
+	}
+});
+
 // Move log (to another Kolumn)
-// TODO
 ipcMain.on('logs:move_log', async (e, draggableId, droppableId) => {
 	try {
 		const doc = await Log.findById(draggableId);
@@ -169,18 +203,3 @@ async function sendLogs() {
 		console.log(e);
 	}
 }
-
-app.on('window-all-closed', () => {
-	if (process.platform !== 'darwin') {
-		app.quit();
-	}
-})
-
-app.on('activate', () => {
-	if (mainWindow === null) {
-		createMainWindow();
-	}
-})
-
-// Stop error
-app.allowRendererProcessReuse = true;

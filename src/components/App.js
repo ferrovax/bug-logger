@@ -1,20 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Row, Col, Card, Alert, Form, Button, Navbar, InputGroup } from 'react-bootstrap';
+import { Row, Card } from 'react-bootstrap';
 import { DragDropContext } from 'react-beautiful-dnd';
-import AddLogModal from './AddLogModal';
 import Login from './Login';
 import Ticket from './Ticket';
 import Kolumn from './Kolumn';
+import Header from './Header';
 import { ipcRenderer } from 'electron';
 
 const App = () => {
 	const [logs, setLogs] = useState([]);
-
-	const [alert, setAlert] = useState({
-		show: false,
-		message: '',
-		variant: 'success'
-	});
+	const [user, setUser] = useState(null);
 
 	useEffect(() => {
 		ipcRenderer.send('logs:load');
@@ -22,6 +17,10 @@ const App = () => {
 		ipcRenderer.on('logs:get', (e, logs) => {
 			setLogs(JSON.parse(logs));
 			//console.log(logs);
+		});
+
+		ipcRenderer.on('username', (e, u) => {
+			setUser(u);
 		});
 
 		ipcRenderer.on('logs:clear', () => {
@@ -45,35 +44,14 @@ const App = () => {
 		showAlert('Log Removed');
 	}
 
-	function showAlert(message, variant = 'success', time = 3000) {
-		setAlert({
-			show: true,
-			message,
-			variant
-		});
-
-		setTimeout(() => {
-			setAlert({
-				show: false,
-				message: '',
-				variant: 'success'
-			})
-		}, time);
-	}
-
 	const onDragEnd = result => {
-		/*
-		destination and source both have .index and .droppableId
-		droppableId is the Kolumn title string
-		draggableId is the log's _id
-		*/
 		const { destination, source, draggableId } = result;
 
 		if (
 			!destination ||
 			(destination.index === source.index && destination.droppableId === source.droppableId)
 		) {
-			return; // null destination or destination===source, exit function
+			return; //null destination or destination === source, exit function
 		}
 
 		// rearrange the Logs
@@ -90,33 +68,24 @@ const App = () => {
 		}
 	}
 
-	//<Login />
-	//column cards could be separate component
 	return (
 			<div style={{ backgroundColor: 'black' }}>
 			<Login />
-			{alert.show && <Alert variant={alert.variant}>{alert.message}</Alert>}
-			{/* replace alert with dismissible toasts */}
+
+			{/* still need user feedback for adding ticket */}
+			{/* could be as simple as BACKLOG order being most to least recent */}
 
 			<DragDropContext onDragEnd={onDragEnd}>
 
 			<Card bg='dark'>
 				<Card.Header>
-					<Navbar className='justify-content-between'>
-						<AddLogModal addItem={addItem} />
-						<InputGroup className='ml-lg-3'>
-							<Form.Control style={{ backgroundColor: '#343a40', borderColor: '#17a2b8' }} type='text' size='sm' placeholder='Filter tickets' />
-							<InputGroup.Append>
-								<Button variant='outline-info' size='sm'>Search</Button>
-							</InputGroup.Append>
-						</InputGroup>
-					</Navbar>
+					<Header addItem={addItem} />
 				</Card.Header>
-				<Card.Body>
+				<Card.Body style={{ height: 800 }}>
 					<Row>
-						<Kolumn title='BACKLOG' logs={logs} />
-						<Kolumn title='IN PROGRESS' logs={logs} />
-						<Kolumn title='RESOLVED' logs={logs} />
+						<Kolumn title='BACKLOG' logs={logs} user={user} />
+						<Kolumn title='IN PROGRESS' logs={logs} user={user} />
+						<Kolumn title='RESOLVED' logs={logs} user={user} />
 					</Row>
 				</Card.Body>
 			</Card>
