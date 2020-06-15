@@ -3,14 +3,14 @@ import { Row, Col, Card } from 'react-bootstrap';
 import { Droppable } from 'react-beautiful-dnd'
 import Ticket from './Ticket';
 
-const Kolumn = ({ title, logs, user }) => {
-  // Filter for logs that belong in this Kolumn
-  const _logs = logs.filter(log => log.category === title);
+// Kanban column -> Kolumn
+
+const Kolumn = ({ title, column, user }) => {
   const [numCards, setNumCards] = useState('');
 
   useEffect(() => {
-    setNumCards(_logs.length);
-  }, [_logs]);
+    setNumCards(column.length);
+  }, [column]);
 
   return (
     <Col>
@@ -20,7 +20,7 @@ const Kolumn = ({ title, logs, user }) => {
             ref={provided.innerRef}
             {...provided.droppableProps}
           >
-            <Content title={title} filteredLogs={_logs} num={numCards} user={user} />
+            <Content title={title} filteredLogs={column} num={numCards} user={user} />
             {provided.placeholder}
           </div>
         )}
@@ -29,7 +29,7 @@ const Kolumn = ({ title, logs, user }) => {
   );
 }
 
-const Content = ({ title, filteredLogs, num, user }) => {
+const Content = ({ title, filteredLogs, num, user}) => {
   const subtitle = `${num} card${num === 1 ? '' : 's'}`;
 
   return (
@@ -40,7 +40,7 @@ const Content = ({ title, filteredLogs, num, user }) => {
           <Card.Subtitle className='text-muted'>{subtitle}</Card.Subtitle>
         </Card.Header>
 
-        <Card.Body style={{ maxHeight: 450, overflowY: 'scroll' }}>
+        <Card.Body style={{ maxHeight: 600, overflowY: 'scroll' }}>
           {filteredLogs.map((log, index) => (
             <div key={log._id}>
               <Ticket log={log} index={index} user={user} />

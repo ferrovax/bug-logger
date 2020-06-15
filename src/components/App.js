@@ -11,12 +11,17 @@ const App = () => {
 	const [logs, setLogs] = useState([]);
 	const [user, setUser] = useState(null);
 
+	const [columns, setColumns] = useState({
+		backlog: [],
+		in_progress: [],
+		resolved: []
+	});
+
 	useEffect(() => {
 		ipcRenderer.send('logs:load');
 
-		ipcRenderer.on('logs:get', (e, logs) => {
-			setLogs(JSON.parse(logs));
-			//console.log(logs);
+		ipcRenderer.on('logs:get', (e, _logs) => {
+			setLogs(JSON.parse(_logs));
 		});
 
 		ipcRenderer.on('username', (e, u) => {
@@ -25,23 +30,26 @@ const App = () => {
 
 		ipcRenderer.on('logs:clear', () => {
 			setLogs([]);
-			showAlert('Logs Cleared');
 		});
-	}, [])
+	}, []);
 
-	function addItem(item) {
-		if (item.text === '') {
-			showAlert('Please enter a description', 'danger');
-			return false;
+	useEffect(() => {
+		setColumns({
+			backlog: logs.filter(log => log.category === 'BACKLOG'),
+			in_progress: logs.filter(log => log.category === 'IN PROGRESS'),
+			resolved: logs.filter(log => log.category === 'RESOLVED')
+		});
+	}, [logs]);
+
+	const getCard = source => {
+		switch (source.droppableId) {
+			case 'BACKLOG':
+				return columns.backlog.splice(source.index, 1)[0];
+			case 'IN PROGRESS':
+				return columns.in_progress.splice(source.index, 1)[0];
+			case 'RESOLVED':
+				return columns.resolved.splice(source.index, 1)[0];
 		}
-
-		ipcRenderer.send('logs:add', item);
-		showAlert('Log Added');
-	}
-
-	function deleteItem(id) {
-		ipcRenderer.send('logs:delete', id);
-		showAlert('Log Removed');
 	}
 
 	const onDragEnd = result => {
@@ -54,17 +62,25 @@ const App = () => {
 			return; //null destination or destination === source, exit function
 		}
 
-		// rearrange the Logs
-		// if the kolumnm is different need to update log category in main then sendLogs back
-		// and handle indexing
-		// if the kolumn is the same, still need to handle indexing
-		// seems like indexing could be extracted as a helper
-
 		if (destination.droppableId !== source.droppableId) {
+			// TODO: dnd still yet to insert card into dropped order in a new column
+			// => this is likely due to ipcMain sending logs back ordered by date
+			// => add toggleable option in main's sendLogs() for sending back in a
+			//		specified order; Logs sent by date only at startup
 			ipcRenderer.send('logs:move_log', draggableId, destination.droppableId);
-		} else {
-			//// TODO
-			return; // replace me
+		}
+
+		const card = getCard(source);
+
+		switch (destination.droppableId) {
+			case 'BACKLOG':
+				columns.backlog.splice(destination.index, 0, card);
+				break;
+			case 'IN PROGRESS':
+				columns.in_progress.splice(destination.index, 0, card);
+				break;
+			case 'RESOLVED':
+				columns.resolved.splice(destination.index, 0, card);
 		}
 	}
 
@@ -72,20 +88,18 @@ const App = () => {
 			<div style={{ backgroundColor: 'black' }}>
 			<Login />
 
-			{/* still need user feedback for adding ticket */}
-			{/* could be as simple as BACKLOG order being most to least recent */}
-
 			<DragDropContext onDragEnd={onDragEnd}>
 
 			<Card bg='dark'>
 				<Card.Header>
-					<Header addItem={addItem} />
+					<Header />
 				</Card.Header>
 				<Card.Body style={{ height: 800 }}>
 					<Row>
-						<Kolumn title='BACKLOG' logs={logs} user={user} />
-						<Kolumn title='IN PROGRESS' logs={logs} user={user} />
-						<Kolumn title='RESOLVED' logs={logs} user={user} />
+						{/* you could clean this up as a map over [titles] */}
+						<Kolumn title='BACKLOG' column={columns.backlog} user={user} />
+						<Kolumn title='IN PROGRESS' column={columns.in_progress} user={user} />
+						<Kolumn title='RESOLVED' column={columns.resolved} user={user} />
 					</Row>
 				</Card.Body>
 			</Card>
