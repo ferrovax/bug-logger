@@ -149,14 +149,33 @@ ipcMain.on('logs:add', async (e, item) => {
 	}
 });
 
-// Edit log
-// TODO/incomplete
-ipcMain.on('logs:edit', async (e, xyz) => {
+// Add tag
+ipcMain.on('tags:add', async (e, tag, id) => {
 	try {
-		const doc = await Log.findById(xyz);
-		// compare each part of schema for changes, if so update
-		// make a helper for this
+		const doc = await Log.findById(id);
+		let _tags = [...doc.tags, tag];
+
+		await Log.updateOne(
+			{ _id: id },
+			{ $set: { tags: _tags } }
+		);
+		sendLogs();
+	} catch (err) {
+		console.log(err);
+	}
+});
+
+// Edit log
+ipcMain.on('logs:edit', async (e, item) => {
+	try {
+		const doc = await Log.findById(item.id);
+
+		doc.text = doc.text !== item.text ? item.text : doc.text;
+		doc.priority = doc.priority !== item.priority ? item.priority : doc.priority;
+		doc.created = Date.now();
+
 		await doc.save();
+		sendLogs();
 	} catch (err) {
 		console.log(err);
 	}
@@ -184,6 +203,33 @@ ipcMain.on('logs:delete', async (e, id) => {
 	}
 });
 
+// Delete tag
+ipcMain.on('tags:delete', async (e, tag, id) => {
+	try {
+		const doc = await Log.findById(id);
+		let _tags = doc.tags.filter(t => t !== tag);
+
+		await Log.updateOne(
+			{ _id: id },
+			{ $set: { tags: _tags } }
+		);
+		sendLogs();
+	} catch (err) {
+		console.log(err);
+	}
+});
+
+// Search
+ipcMain.on('logs:search', async (e, terms) => {
+	try {
+		const logs = await Log.find({ text: terms });
+		console.log(logs);
+		mainWindow.webContents.send('logs:get', JSON.stringify(logs));
+	} catch (err) {
+		console.log(err);
+	}
+});
+
 // Clear logs
 async function clearLogs() {
 	try {
@@ -197,7 +243,7 @@ async function clearLogs() {
 // Send logs to frontend (App.js)
 async function sendLogs() {
 	try {
-		const logs = await Log.find().sort({ created: 1 });
+		const logs = await Log.find().sort({ created: -1 });
 		mainWindow.webContents.send('logs:get', JSON.stringify(logs));
 	} catch (e) {
 		console.log(e);
