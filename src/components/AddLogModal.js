@@ -2,13 +2,14 @@ import React, { useState } from 'react';
 import { Modal, Toast, Form, Button } from 'react-bootstrap';
 import { ipcRenderer } from 'electron';
 
-const AddLogModal = ({ addItem }) => {
+const AddLogModal = () => {
   const [show, setShow] = useState(false);
   const [text, setText] = useState('');
   const [priority, setPriority] = useState('minor');
+  const [ticketType, setTicketType] = useState('bug');
 
   const handlePlus = () => {
-    addItem({ text, priority });
+    ipcRenderer.send('logs:add', { text, priority, tags: [ticketType] });
     handleClose();
   }
 
@@ -16,14 +17,15 @@ const AddLogModal = ({ addItem }) => {
     setShow(false);
     setText('');
     setPriority('minor');
+    setTicketType('bug');
   };
 
   const handleShow = () => setShow(true);
 
   return (
     <>
-      <Button variant='outline-info' onClick={handleShow}>
-        +
+      <Button className='font-weight-bold' size='sm' variant='outline-info' onClick={handleShow}>
+        + TICKET
       </Button>
 
       <Modal show={show} onHide={handleClose}>
@@ -39,8 +41,15 @@ const AddLogModal = ({ addItem }) => {
                 <option value='minor'>minor</option>
                 <option value='moderate'>moderate</option>
                 <option value='major'>major</option>
+              </Form.Control>
+              <Form.Text className='text-muted'>Select ticket priority</Form.Text>
+            </Form.Group>
+            <Form.Group>
+              <Form.Control as='select' value={ticketType} onChange={e => setTicketType(e.target.value)}>
+                <option value='bug'>bug</option>
+                <option value='feature'>feature</option>
                 </Form.Control>
-                <Form.Text className='text-muted'>Select ticket priority</Form.Text>
+                <Form.Text className='text-muted'>Bug or feature?</Form.Text>
             </Form.Group>
           </Form>
         </Modal.Body>
