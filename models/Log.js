@@ -11,6 +11,7 @@ const LogSchema = new mongoose.Schema({
     default: 'minor',
     enum: ['minor', 'moderate', 'major']
   },
+  tags: [String],
   user: {
     type: String,
     trim: true,
