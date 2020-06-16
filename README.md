@@ -3,6 +3,11 @@
 
 ![work in progress image](assets/screenshot.png)
 
+## Motivation
+Kanban-inspired ...
+
+## Features
+
 ## Built With
 + [Node](https://nodejs.org/)
 + [Electron](https://www.eletronjs.org/)
