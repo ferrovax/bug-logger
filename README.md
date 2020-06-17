@@ -1,10 +1,9 @@
 # BugLogger
-**Work in progress.** Cross-platform issue-tracking desktop application.
+**Work in progress.**
 
 ![work in progress image](assets/screenshot.png)
 
 ## Motivation
-Kanban-inspired ...
 
 ## Features
 
@@ -18,6 +17,10 @@ Kanban-inspired ...
 ## Installation
 
 ## Quick Start
+
+### Database
+
+### Packaging the App
 
 ## License
 MIT
