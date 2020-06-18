@@ -3,7 +3,7 @@ import { Col, Button, Navbar, InputGroup, Form } from 'react-bootstrap';
 import AddLogModal from './AddLogModal';
 import { ipcRenderer } from 'electron';
 
-const Header = () => {
+const Header = ({ columns, setColumns }) => {
   const [terms, setTerms] = useState('');
   const [buttontxt, setButtontxt] = useState('Search');
 
@@ -17,6 +17,16 @@ const Header = () => {
 
   const handleSearch = () => {
     ipcRenderer.send('logs:search', terms);
+
+    // TODO: handling search in frontend might be better
+    // would have to make changes with setColumns
+    /*
+    columns.backlog.filter(log => {
+      // check text, priority, user, tags
+      log.text.search(terms) >= 0 || log.priority.search(terms) >=0 || log.user.search(terms) >= 0
+    });
+
+    */
     setButtontxt('Reset');
   }
 

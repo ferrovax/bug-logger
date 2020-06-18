@@ -67,10 +67,5 @@ const Login = () => {
     </Modal>
   );
 }
-/*
-<Button variant='info' onClick={onSubmit} block>
-  Log in
-</Button>
-<LoadingButton variant='info' text='Log in' fail={alert} />
-*/
+
 export default Login;

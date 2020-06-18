@@ -91,15 +91,6 @@ const menu = [
 	{
 		role: 'editMenu'
 	},
-	{
-		label: 'Logs',
-		submenu: [
-			{
-				label: 'Clear Logs',
-				click: () => clearLogs()
-			}
-		]
-	},
 	...(isDev ? [
 		{
 			label: 'Developer',
@@ -231,6 +222,7 @@ ipcMain.on('logs:search', async (e, terms) => {
 });
 
 // Clear logs
+/*
 async function clearLogs() {
 	try {
 		await Log.deleteMany({});
@@ -239,8 +231,9 @@ async function clearLogs() {
 		console.log(e);
 	}
 }
+*/
 
-// Send logs to frontend (App.js)
+// Send logs to frontend
 async function sendLogs() {
 	try {
 		const logs = await Log.find().sort({ created: -1 });

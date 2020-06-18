@@ -62,14 +62,6 @@ const App = () => {
 			return; //null destination or destination === source, exit function
 		}
 
-		if (destination.droppableId !== source.droppableId) {
-			// TODO: dnd still yet to insert card into dropped order in a new column
-			// => this is likely due to ipcMain sending logs back ordered by date
-			// => add toggleable option in main's sendLogs() for sending back in a
-			//		specified order; Logs sent by date only at startup
-			ipcRenderer.send('logs:move_log', draggableId, destination.droppableId);
-		}
-
 		const card = getCard(source);
 
 		switch (destination.droppableId) {
@@ -82,6 +74,10 @@ const App = () => {
 			case 'RESOLVED':
 				columns.resolved.splice(destination.index, 0, card);
 		}
+
+		if (destination.droppableId !== source.droppableId) {
+			ipcRenderer.send('logs:move_log', draggableId, destination.droppableId);
+		}
 	}
 
 	return (
@@ -92,11 +88,10 @@ const App = () => {
 
 			<Card bg='dark'>
 				<Card.Header>
-					<Header />
+					<Header columns={columns} setColumns={setColumns} />
 				</Card.Header>
 				<Card.Body style={{ height: 800 }}>
 					<Row>
-						{/* you could clean this up as a map over [titles] */}
 						<Kolumn title='BACKLOG' column={columns.backlog} user={user} />
 						<Kolumn title='IN PROGRESS' column={columns.in_progress} user={user} />
 						<Kolumn title='RESOLVED' column={columns.resolved} user={user} />
