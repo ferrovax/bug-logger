@@ -39,6 +39,9 @@ const Header = ({ columns, setColumns }) => {
   return (
     <Navbar className='justify-content-between'>
       <Col>
+        <Button className='font-weight-bold mr-lg-3' size='sm' variant='outline-info'>
+          IMPORT LOG
+        </Button>
         <AddLogModal />
       </Col>
       <Col>
