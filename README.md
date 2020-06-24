@@ -1,5 +1,5 @@
 # BugLogger
-**Work in progress.**
+**Work in progress:**
 
 ![work in progress image](assets/screenshot.png)
 
@@ -19,8 +19,12 @@
 ## Quick Start
 
 ### Database
+To connect to your own [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) cluster and database, edit the URI template string in `/config/db.js`:
+```javascript
+`mongodb+srv://${username}:${password}@<cluster_code_here>.mongodb.net/<database_name_here>?retryWrites=true&w=majority`
+```
 
 ### Packaging the App
 
 ## License
-MIT
+MIT license (c) 2020.
