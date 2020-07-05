@@ -1,2 +1,9 @@
 export const SIGN_IN = 'SIGN_IN';
 export const SIGN_OUT = 'SIGN_OUT';
+export const LOAD_LOGS = 'LOAD_LOGS';
+export const ADD_LOG = 'ADD_LOG';
+export const ADD_TAG = 'ADD_TAG';
+export const EDIT_LOG = 'EDIT_LOG';
+export const MOVE_LOG = 'MOVE_LOG';
+export const DELETE_LOG = 'DELETE_LOG';
+export const DELETE_TAG = 'DELETE_TAG';
