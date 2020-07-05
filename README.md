@@ -4,6 +4,7 @@
 ![work in progress image](assets/screenshot.png)
 
 ## Motivation
+A Kanban-inspired issue tracker for building and editing tickets generated from parsing error logs.
 
 ## Features
 
